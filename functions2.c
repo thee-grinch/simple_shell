@@ -2,7 +2,8 @@
 #include <unistd.h>
 /**
  * execute - used to execute commands
- * @s: the array of string pointers
+ * @command: the array of string pointers
+ * @s: the argv
  * Return: 1 on success
  */
 int execute(char **s, char *command)
@@ -14,7 +15,7 @@ int execute(char **s, char *command)
 }
 /**
  * _which - returns the location of a function
- * @command: the command tobe checked 
+ * @command: the command of the file
  * Return: the location or NULL if not true
  */
 char *_which(char *command)
