@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 		command  = _which(argv[0]);
 		if (!command)
 		{
-			perror("");
+			perror(command[0]);
 			continue;
 		}
 		child = fork();
