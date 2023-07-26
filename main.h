@@ -18,5 +18,7 @@ int execute(char **, char *);
 char *_which(char *);
 char *_strcat(char *, char *);
 char *allocate(char *, int);
+int _putchar(char c);
+void _puts(char *s);
 
 #endif

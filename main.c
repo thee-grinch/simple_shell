@@ -4,9 +4,7 @@
  */
 void printprompt(void)
 {
-	char *prompt = "($) ";
-
-	printf("%s", prompt);
+	_puts("($) ");
 }
 /**
  * main - acts as a simple shell
