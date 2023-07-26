@@ -14,7 +14,7 @@ int execute(char **s, char *command)
 }
 /**
  * _which - returns the location of a function
- * @command: the path
+ * @command: the command tobe checked 
  * Return: the location or NULL if not true
  */
 char *_which(char *command)
