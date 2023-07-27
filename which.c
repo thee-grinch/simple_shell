@@ -1,26 +1,15 @@
-#include "main.h"
-#include <unistd.h>
-/**
- * execute - used to execute commands
- * @command: the array of string pointers
- * @s: the argv
- * Return: 1 on success
- */
-int execute(char **s, char *command)
-{
-	printf("%s", command);
-	if (execve(command, s, NULL) == -1)
-		printf("Execution Err %s \n", command);
-	return (1);
-}
+#include "simple_shell.h"
 /**
  * _which - returns the location of a function
- * @command: the command of the file
+ * @command: the path
+ * @token: the token to be trancated
+ * @pathcheck: the path to be checked whether it exists
+ * @pathcpy: the copy of the path;
  * Return: the location or NULL if not true
  */
-char *_which(char *command)
+char *_which(char *command, char *token, char *pathcheck, char *pathcpy)
 {
-	char *path = NULL, *token = NULL, *pathcheck = NULL, *pathcpy = NULL;
+	char *path;
 	int i;
 	struct stat fileStat;
 
@@ -43,12 +32,13 @@ char *_which(char *command)
 		_strcat(pathcheck, command);
 		if (stat(pathcheck, &fileStat) != -1)
 		{
+			free(path);
 			return (pathcheck);
 		}
 		free(pathcheck);
 		pathcheck = NULL;
 		token = strtok(NULL, ":");
 	}
+	free(path);
 	return (NULL);
 }
-

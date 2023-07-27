@@ -1,57 +1,48 @@
-#include "main.h"
+#include "simple_shell.h"
+
 /**
- * printprompt - prints a prompt
- */
-void printprompt(void)
-{
-	_puts("($) ");
-}
-/**
- * main - acts as a simple shell
- * @argc: the argument counter
+ * main - is the simple shell main function
+ * @argc: the argument count
  * @argv: the argument vector
- * Return: zero on success
+ * Return: 0 in success
  */
 int main(int argc, char *argv[])
 {
-	char *buffer, *buffercpy, *command;
-	size_t n;
-	ssize_t chars;
-	pid_t child;
-	int status;
-
+	char *buff, *buffcpy;
+	size_t n = 0;
+	int readchars, count, i;
+	char *token = NULL, *pathcpy = NULL, *pathcheck = NULL, *command = NULL;
+	(void)argc;
 	while (1)
 	{
-		printprompt();
-		chars = getline(&buffer, &n, stdin);
-		if (chars == -1)
+		readchars = getline(&buff, &n, stdin);
+		buffcpy = malloc(sizeof(char) * readchars + 1);
+		if (!buffcpy)
 		{
-			printf("exiting\n");
+			perror("Memory allocation error");
+			free(buff);
 			return (-1);
 		}
-		argc = calculate_tokens(buffer);
-		buffercpy = allocate(buffercpy, chars);
-		_strcpy(buffercpy, buffer);
-		argv = malloc(sizeof(char *) * argc);
+		_strcpy(buffcpy, buff);
+		if (readchars == -1)
+			break;
+		count = calculate_tokens(buffcpy);
+		argv = malloc(sizeof(char *) * (count + 1));
 		if (!argv)
-			perror("Memory allocation error\n");
-		tokenize(buffercpy, argv);
-		command  = _which(argv[0]);
-		if (!command)
 		{
-			perror(argv[0]);
-			continue;
+			perror("memory allocation error\n");
+			return (-1);
 		}
-		child = fork();
-		if (child < 0)
-			perror("Fork failed\n");
-		else if (child == 0)
-			execute(argv, command);
-		else
-			wait(&status);
+		tokenize(buff, argv);
+		for (i = 0; argv[i] != NULL; i++)
+		{
+			puts(argv[i]);
+		}
+		command = _which(argv[0], token, pathcheck, pathcpy);
+		execute(argv, command);
+		free_them(buff, buffcpy, token, pathcpy, pathcheck, command);
+		if (argv)
+			free_all(argv);
 	}
-	free(buffer);
-	free(buffercpy);
-	release_memory(argv);
 	return (0);
 }

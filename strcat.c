@@ -1,24 +1,19 @@
-#include "main.h"
+#include "simple_shell.h"
 /**
- * _strcat - The function is used to concatenate 2 strings
- * @source: the source string
- * @destination: the destination string
- * Return: the destination string;
+ * _strcat - concatenates twos trings
+ * @src: the source string
+ * @dest: the destination string
  */
-char *_strcat(char *destination, char *source)
+void _strcat(char *dest, char *src)
 {
-	int a, b;
+	int i, j;
 
-	while (destination && source)
+	for (i = 0; dest[i] != '\0'; i++)
 	{
-		for (a = 0; destination[a] != '\0'; a++)
-			;
-		for (b = 0; source[b] != '\0'; b++)
-		{
-			destination[a++] = source[b];
-		}
-		destination[a] = '\0';
-		return (destination);
 	}
-	return (NULL);
+	for (j = 0; src[j] != '\0';  j++)
+	{
+		dest[i++] = src[j];
+	}
+	dest[i] = '\0';
 }
