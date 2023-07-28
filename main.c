@@ -1,48 +1,44 @@
-#include "simple_shell.h"
+#include "shell.h"
 
 /**
- * main - is the simple shell main function
- * @argc: the argument count
- * @argv: the argument vector
- * Return: 0 in success
+ * main - The simple shell entry point
+ * @ac: the argument counter
+ * @av: the argument vector
+ *
+ * Return: exits with a return of zero
  */
-int main(int argc, char *argv[])
+int main(int ac, char **av)
 {
-	char *buff, *buffcpy;
-	size_t n = 0;
-	int readchars, count, i;
-	char *token = NULL, *pathcpy = NULL, *pathcheck = NULL, *command = NULL;
-	(void)argc;
-	while (1)
+	info_t info[] = { INFO_INIT };
+	int fd = 2;
+
+	asm ("mov %1, %0\n\t"
+		"add $3, %0"
+		: "=r" (fd)
+		: "r" (fd));
+
+	if (ac == 2)
 	{
-		readchars = getline(&buff, &n, stdin);
-		buffcpy = malloc(sizeof(char) * readchars + 1);
-		if (!buffcpy)
+		fd = open(av[1], O_RDONLY);
+		if (fd == -1)
 		{
-			perror("Memory allocation error");
-			free(buff);
-			return (-1);
+			if (errno == EACCES)
+				exit(126);
+			if (errno == ENOENT)
+			{
+				_eputs(av[0]);
+				_eputs(": 0: Can't open ");
+				_eputs(av[1]);
+				_eputchar('\n');
+				_eputchar(BUF_FLUSH);
+				exit(127);
+			}
+			return (EXIT_FAILURE);
 		}
-		_strcpy(buffcpy, buff);
-		if (readchars == -1)
-			break;
-		count = calculate_tokens(buffcpy);
-		argv = malloc(sizeof(char *) * (count + 1));
-		if (!argv)
-		{
-			perror("memory allocation error\n");
-			return (-1);
-		}
-		tokenize(buff, argv);
-		for (i = 0; argv[i] != NULL; i++)
-		{
-			puts(argv[i]);
-		}
-		command = _which(argv[0], token, pathcheck, pathcpy);
-		execute(argv, command);
-		free_them(buff, buffcpy, token, pathcpy, pathcheck, command);
-		if (argv)
-			free_all(argv);
+		info->readfd = fd;
 	}
-	return (0);
+	populate_env_list(info);
+	read_history(info);
+	hsh(info, av);
+	return (EXIT_SUCCESS);
 }
